@@ -885,3 +885,19 @@ release: build-all-images release-tag release-ghpages
 else
 release: build-all-images release-tag release-ghpages push-release-images
 endif
+
+
+# ---------------------------------------------------------------------------
+# Initialise a Kind k8s cluster
+# ---------------------------------------------------------------------------
+.PHONY: kind-init
+kind:
+	./hack/start-kind.sh
+
+# ---------------------------------------------------------------------------
+# Clean-up a Kind k8s cluster
+# ---------------------------------------------------------------------------
+.PHONY: kind-init
+kind-clean:
+	kind delete cluster --name operator-test
+	unset KUBECONFIG

@@ -23,6 +23,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"os"
+	"strings"
 	"testing"
 
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -380,6 +381,9 @@ func WaitForCoherenceInternalCleanup(f *framework.Framework, namespace string) e
 			}
 			return true, nil
 		} else {
+			if strings.Contains(err.Error(), "no matches for kind") {
+				return true, nil
+			}
 			fmt.Printf("Error waiting for deletion of CoherenceRole resources: %s\n", err.Error())
 			return false, nil
 		}

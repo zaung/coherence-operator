@@ -15,20 +15,14 @@ def archiveAndCleanup() {
         junit allowEmptyResults: true, testResults: "pkg/**/test-report.xml,test/**/test-report.xml,build/_output/test-logs/*-test.xml,java/**/surefire-reports/*.xml,java/**/failsafe-reports/*.xml"
         archiveArtifacts onlyIfSuccessful: false, allowEmptyArchive: true, artifacts: 'build/_output/helm-charts/**/*,build/_output/test-logs/**/*,deploy/**/*,java/utils/target/test-output/**/*,java/utils/target/surefire-reports/**/*,java/utils/target/failsafe-reports/**/*,java/functional-tests/target/test-output/**/*,java/functional-tests/target/surefire-reports/**/*,java/functional-tests/target/failsafe-reports/**/*'
         sh '''
-            helm delete --purge $(helm ls --namespace $TEST_NAMESPACE --short) || true
-            kubectl delete clusterrole $TEST_NAMESPACE-coherence-operator || true
-            kubectl delete clusterrolebinding $TEST_NAMESPACE-coherence-operator-cluster || true
-            kubectl delete pvc -n $TEST_NAMESPACE $(kubectl get pvc -n $TEST_NAMESPACE -o name) || true
-            kubectl delete namespace $TEST_NAMESPACE --force --grace-period=0 || true
-            make delete-coherence-clusters || true
-            make uninstall-crds || true
+            make kind-clean
         '''
     }
 }
 
 pipeline {
     agent {
-        label 'Kubernetes'
+        label 'Kind'
     }
     environment {
         HTTP_PROXY  = credentials('coherence-operator-http-proxy')
@@ -173,6 +167,8 @@ pipeline {
                     string(credentialsId: 'ocr-docker-username', variable: 'OCR_DOCKER_USERNAME'),
                     string(credentialsId: 'ocr-docker-server',   variable: 'OCR_DOCKER_SERVER')]) {
                     sh '''
+                        make kind
+                        export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                         kubectl create namespace $TEST_NAMESPACE || true
                         kubectl create secret docker-registry coherence-k8s-operator-development-secret \
                             --namespace $TEST_NAMESPACE \
@@ -200,6 +196,8 @@ pipeline {
                     setBuildStatus("Running Operator end-to-end local tests...", "PENDING", "${env.PROJECT_URL}", "${env.GIT_COMMIT}")
                 }
                 sh '''
+                    make kind
+                    export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                     export http_proxy=$HTTP_PROXY
                     export CREATE_TEST_NAMESPACE=false
                     export IMAGE_PULL_SECRETS=coherence-k8s-operator-development-secret,ocr-k8s-operator-development-secret
@@ -221,6 +219,8 @@ pipeline {
                     setBuildStatus("Running Operator end-to-end tests...", "PENDING", "${env.PROJECT_URL}", "${env.GIT_COMMIT}")
                 }
                 sh '''
+                    make kind
+                    export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                     export http_proxy=$HTTP_PROXY
                     export CREATE_TEST_NAMESPACE=false
                     export IMAGE_PULL_POLICY=Always
@@ -241,6 +241,8 @@ pipeline {
                     setBuildStatus("Running Operator Helm tests...", "PENDING", "${env.PROJECT_URL}", "${env.GIT_COMMIT}")
                 }
                 sh '''
+                    make kind
+                    export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                     export http_proxy=$HTTP_PROXY
                     export CREATE_TEST_NAMESPACE=false
                     export IMAGE_PULL_POLICY=Always
