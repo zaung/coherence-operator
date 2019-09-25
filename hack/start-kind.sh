@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-echo "${HELM_COHERENCE_IMAGE}"
-
 KIND=$(kind get clusters | grep operator-test)
 if [[ "${KIND}" == "" ]]
 then
