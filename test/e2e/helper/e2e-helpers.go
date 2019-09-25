@@ -365,6 +365,9 @@ func WaitForCoherenceInternalCleanup(f *framework.Framework, namespace string) e
 			}
 			return true, nil
 		} else {
+			if strings.Contains(err.Error(), "no matches for kind") {
+				return true, nil
+			}
 			fmt.Printf("Error waiting for deletion of CoherenceCluster resources: %s\n", err.Error())
 			return false, nil
 		}
@@ -401,6 +404,9 @@ func WaitForCoherenceInternalCleanup(f *framework.Framework, namespace string) e
 			}
 			return true, nil
 		} else {
+			if strings.Contains(err.Error(), "no matches for kind") {
+				return true, nil
+			}
 			fmt.Printf("Error waiting for deletion of CoherenceInternal resources: %s\n", err.Error())
 			return false, nil
 		}
