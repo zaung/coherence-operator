@@ -167,6 +167,7 @@ pipeline {
                     string(credentialsId: 'ocr-docker-username', variable: 'OCR_DOCKER_USERNAME'),
                     string(credentialsId: 'ocr-docker-server',   variable: 'OCR_DOCKER_SERVER')]) {
                     sh '''
+                        docker login $DOCKER_SERVER -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
                         make kind
                         export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                         kubectl create namespace $TEST_NAMESPACE || true

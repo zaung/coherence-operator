@@ -24,9 +24,13 @@ then
   kubectl label node operator-test-worker3 failure-domain.beta.kubernetes.io/zone=zoned-out --overwrite
   kubectl label node operator-test-worker3 failure-domain.beta.kubernetes.io/region=jenkins --overwrite
 
+  docker pull ${HELM_COHERENCE_IMAGE}
   kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 ${HELM_COHERENCE_IMAGE}
+  docker pull ${OPERATOR_IMAGE}
   kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 ${OPERATOR_IMAGE}
+  docker pull ${UTILS_IMAGE}
   kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 ${UTILS_IMAGE}
+  docker pull ${TEST_USER_IMAGE}
   kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 ${TEST_USER_IMAGE}
 else
     echo "Kind cluster operator-test exists"
