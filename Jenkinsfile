@@ -84,7 +84,7 @@ pipeline {
                     docker rmi $(docker images -q -f "dangling=true") || true
                     make clean
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
-                    export TEST_MANIFEST_VALUES=deploy/oci-values.yaml
+                    export TEST_MANIFEST_VALUES=deploy/kind-values.yaml
                     make build-all
                     '''
                 }
@@ -109,7 +109,7 @@ pipeline {
                 withMaven(jdk: 'JDK 11.0.3', maven: 'Maven3.6.0', mavenSettingsConfig: 'coherence-operator-maven-settings', tempBinDir: '') {
                     sh '''
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
-                    export TEST_MANIFEST_VALUES=deploy/oci-values.yaml
+                    export TEST_MANIFEST_VALUES=deploy/kind-values.yaml
                     make test-all
                     '''
                 }
@@ -203,7 +203,7 @@ pipeline {
                     export IMAGE_PULL_SECRETS=coherence-k8s-operator-development-secret,ocr-k8s-operator-development-secret
                     export IMAGE_PULL_POLICY=Always
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
-                    export TEST_MANIFEST_VALUES=deploy/oci-values.yaml
+                    export TEST_MANIFEST_VALUES=deploy/kind-values.yaml
                     make e2e-local-test
                     make script-test
                 '''
@@ -226,7 +226,7 @@ pipeline {
                     export IMAGE_PULL_POLICY=Always
                     export IMAGE_PULL_SECRETS=coherence-k8s-operator-development-secret,ocr-k8s-operator-development-secret
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
-                    export TEST_MANIFEST_VALUES=deploy/oci-values.yaml
+                    export TEST_MANIFEST_VALUES=deploy/kind-values.yaml
                     make e2e-test
                 '''
             }
@@ -248,7 +248,7 @@ pipeline {
                     export IMAGE_PULL_POLICY=Always
                     export IMAGE_PULL_SECRETS=coherence-k8s-operator-development-secret,ocr-k8s-operator-development-secret
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
-                    export TEST_MANIFEST_VALUES=deploy/oci-values.yaml
+                    export TEST_MANIFEST_VALUES=deploy/kind-values.yaml
                     kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/master/example/prometheus-operator-crd/alertmanager.crd.yaml
                     kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/master/example/prometheus-operator-crd/prometheus.crd.yaml
                     kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/master/example/prometheus-operator-crd/prometheusrule.crd.yaml
