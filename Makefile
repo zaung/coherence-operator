@@ -903,5 +903,5 @@ kind:
 # ---------------------------------------------------------------------------
 .PHONY: kind-init
 kind-clean:
-	kind delete cluster --name operator-test
-	unset KUBECONFIG
+	kind delete cluster --name operator-test || true
+	unset KUBECONFIG || true

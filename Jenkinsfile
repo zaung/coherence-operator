@@ -203,7 +203,7 @@ pipeline {
                     export http_proxy=$HTTP_PROXY
                     export CREATE_TEST_NAMESPACE=false
                     export IMAGE_PULL_SECRETS=coherence-k8s-operator-development-secret,ocr-k8s-operator-development-secret
-                    export IMAGE_PULL_POLICY=Always
+                    export IMAGE_PULL_POLICY=IfNotPresent
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
                     export TEST_MANIFEST_VALUES=deploy/kind-values.yaml
                     make e2e-local-test
@@ -225,7 +225,7 @@ pipeline {
                     export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                     export http_proxy=$HTTP_PROXY
                     export CREATE_TEST_NAMESPACE=false
-                    export IMAGE_PULL_POLICY=Always
+                    export IMAGE_PULL_POLICY=IfNotPresent
                     export IMAGE_PULL_SECRETS=coherence-k8s-operator-development-secret,ocr-k8s-operator-development-secret
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
                     export TEST_MANIFEST_VALUES=deploy/kind-values.yaml
@@ -247,7 +247,7 @@ pipeline {
                     export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                     export http_proxy=$HTTP_PROXY
                     export CREATE_TEST_NAMESPACE=false
-                    export IMAGE_PULL_POLICY=Always
+                    export IMAGE_PULL_POLICY=IfNotPresent
                     export IMAGE_PULL_SECRETS=coherence-k8s-operator-development-secret,ocr-k8s-operator-development-secret
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
                     export TEST_MANIFEST_VALUES=deploy/kind-values.yaml
