@@ -24,10 +24,10 @@ then
   kubectl label node operator-test-worker3 failure-domain.beta.kubernetes.io/zone=zoned-out --overwrite
   kubectl label node operator-test-worker3 failure-domain.beta.kubernetes.io/region=jenkins --overwrite
 
-  #	kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 iad.ocir.io/odx-stateservice/test/oracle/coherence-operator:2.0.0-ci
-  #	kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 iad.ocir.io/odx-stateservice/test/oracle/coherence-operator:2.0.0-ci-utils
-  #	kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 iad.ocir.io/odx-stateservice/test/oracle/operator-test-image:2.0.0-ci
-  #	kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 iad.ocir.io/odx-stateservice/test/coherence:12.2.1.4.0-b74888
+  kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 ${HELM_COHERENCE_IMAGE}
+  kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 ${OPERATOR_IMAGE}
+  kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 ${UTILS_IMAGE}
+  kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 ${TEST_USER_IMAGE}
 else
     echo "Kind cluster operator-test exists"
 fi

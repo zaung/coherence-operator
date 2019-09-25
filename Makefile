@@ -891,6 +891,10 @@ endif
 # Initialise a Kind k8s cluster
 # ---------------------------------------------------------------------------
 .PHONY: kind-init
+export HELM_COHERENCE_IMAGE := $(HELM_COHERENCE_IMAGE)
+export OPERATOR_IMAGE := $(OPERATOR_IMAGE)
+export UTILS_IMAGE := $(UTILS_IMAGE)
+export TEST_USER_IMAGE := $(TEST_USER_IMAGE)
 kind:
 	./hack/start-kind.sh
 
