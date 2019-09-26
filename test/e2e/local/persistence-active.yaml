@@ -3,6 +3,8 @@ kind: CoherenceCluster
 metadata:
   name: test-cluster
 spec:
+  logging:
+    level: 9
   roles:
   - role: one
     replicas: 1

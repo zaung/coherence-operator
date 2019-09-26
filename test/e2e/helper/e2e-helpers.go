@@ -191,7 +191,7 @@ func WaitForCoherenceRoleCondition(f *framework.Framework, namespace, name strin
 	err := wait.Poll(retryInterval, timeout, func() (done bool, err error) {
 		role, err = GetCoherenceRole(f, namespace, name)
 		if err != nil {
-			if apierrors.IsNotFound(err) {
+			if apierrors.IsNotFound(err) || strings.Contains(err.Error(), "no matches for kind \"CoherenceRole\"") {
 				logger.Logf("Waiting for availability of CoherenceRole %s - NotFound\n", name)
 				return false, nil
 			}
@@ -251,6 +251,8 @@ func WaitForDeletion(f *framework.Framework, namespace, name string, resource ru
 			return true, nil
 		case err != nil && !errors.IsNotFound(err):
 			return false, err
+		case err != nil && strings.Contains(err.Error(), "no matches for kind"):
+			return true, nil
 		default:
 			fmt.Printf("Waiting for deletion of %s in namespace %s\n", name, namespace)
 			return false, nil
@@ -447,6 +449,9 @@ func WaitForCoherenceInternalCleanup(f *framework.Framework, namespace string) e
 			}
 			return true, nil
 		} else {
+			if strings.Contains(err.Error(), "no matches for kind") {
+				return true, nil
+			}
 			fmt.Printf("Error waiting for deletion of CoherenceInternal resources: %s\n", err.Error())
 			return false, nil
 		}

@@ -890,18 +890,47 @@ endif
 # ---------------------------------------------------------------------------
 # Initialise a Kind k8s cluster
 # ---------------------------------------------------------------------------
-.PHONY: kind-init
+.PHONY: kind-up
+kind-up: kind-create-cluster kind-upload-coherence kind-upload-operator
+
+.PHONY: kind-create-cluster
 export HELM_COHERENCE_IMAGE := $(HELM_COHERENCE_IMAGE)
 export OPERATOR_IMAGE := $(OPERATOR_IMAGE)
 export UTILS_IMAGE := $(UTILS_IMAGE)
 export TEST_USER_IMAGE := $(TEST_USER_IMAGE)
-kind:
+kind-create-cluster:
 	./hack/start-kind.sh
+
+.PHONY: kind-upload-coherence
+export HELM_COHERENCE_IMAGE := $(HELM_COHERENCE_IMAGE)
+export OPERATOR_IMAGE := $(OPERATOR_IMAGE)
+export UTILS_IMAGE := $(UTILS_IMAGE)
+export TEST_USER_IMAGE := $(TEST_USER_IMAGE)
+kind-upload-coherence:
+	docker pull "${HELM_COHERENCE_IMAGE}"
+	kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 "${HELM_COHERENCE_IMAGE}"
+
+.PHONY: kind-upload-operator
+export HELM_COHERENCE_IMAGE := $(HELM_COHERENCE_IMAGE)
+export OPERATOR_IMAGE := $(OPERATOR_IMAGE)
+export UTILS_IMAGE := $(UTILS_IMAGE)
+export TEST_USER_IMAGE := $(TEST_USER_IMAGE)
+kind-upload-operator:
+	kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 "${OPERATOR_IMAGE}"
+	kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 "${UTILS_IMAGE}"
+	kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 "${TEST_USER_IMAGE}"
 
 # ---------------------------------------------------------------------------
 # Clean-up a Kind k8s cluster
 # ---------------------------------------------------------------------------
 .PHONY: kind-init
-kind-clean:
+kind-down:
 	kind delete cluster --name operator-test || true
 	unset KUBECONFIG || true
+
+# ---------------------------------------------------------------------------
+# List all of the targets in the Makefile
+# ---------------------------------------------------------------------------
+.PHONY: list
+list:
+	@$(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$'

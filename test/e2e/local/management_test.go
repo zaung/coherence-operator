@@ -13,6 +13,7 @@ import (
 	"fmt"
 	framework "github.com/operator-framework/operator-sdk/pkg/test"
 	coh "github.com/oracle/coherence-operator/pkg/apis/coherence/v1"
+	mgmt "github.com/oracle/coherence-operator/pkg/management"
 	"github.com/oracle/coherence-operator/test/e2e/helper"
 	"io/ioutil"
 	corev1 "k8s.io/api/core/v1"
@@ -196,7 +197,7 @@ func assertManagementRequest(pod corev1.Pod, client *http.Client, protocol strin
 
 	defer pf.Close()
 
-	url := fmt.Sprintf("%s://127.0.0.1:%d/management/coherence/cluster", protocol, ports["mgmt-port"])
+	url := fmt.Sprintf("%s://127.0.0.1:%d/management/coherence/cluster", protocol, ports[mgmt.PortName])
 
 	var resp *http.Response
 

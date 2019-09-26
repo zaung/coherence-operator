@@ -15,7 +15,7 @@ def archiveAndCleanup() {
         junit allowEmptyResults: true, testResults: "pkg/**/test-report.xml,test/**/test-report.xml,build/_output/test-logs/*-test.xml,java/**/surefire-reports/*.xml,java/**/failsafe-reports/*.xml"
         archiveArtifacts onlyIfSuccessful: false, allowEmptyArchive: true, artifacts: 'build/_output/helm-charts/**/*,build/_output/test-logs/**/*,deploy/**/*,java/utils/target/test-output/**/*,java/utils/target/surefire-reports/**/*,java/utils/target/failsafe-reports/**/*,java/functional-tests/target/test-output/**/*,java/functional-tests/target/surefire-reports/**/*,java/functional-tests/target/failsafe-reports/**/*'
         sh '''
-            make kind-clean
+            make kind-down
         '''
     }
 }
@@ -170,7 +170,7 @@ pipeline {
                         export http_proxy=$HTTP_PROXY
                         export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
                         docker login $DOCKER_SERVER -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-                        make kind
+                        make kind-up
                         export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                         kubectl create namespace $TEST_NAMESPACE || true
                         kubectl create secret docker-registry coherence-k8s-operator-development-secret \
@@ -205,7 +205,7 @@ pipeline {
                     export IMAGE_PULL_POLICY=IfNotPresent
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
                     export TEST_MANIFEST_VALUES=deploy/kind-values.yaml
-                    make kind
+                    make kind-up
                     export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                     make e2e-local-test
                     make script-test
@@ -228,7 +228,7 @@ pipeline {
                     export IMAGE_PULL_SECRETS=coherence-k8s-operator-development-secret,ocr-k8s-operator-development-secret
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
                     export TEST_MANIFEST_VALUES=deploy/kind-values.yaml
-                    make kind
+                    make kind-up
                     export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                     make e2e-test
                 '''
@@ -250,7 +250,7 @@ pipeline {
                     export IMAGE_PULL_SECRETS=coherence-k8s-operator-development-secret,ocr-k8s-operator-development-secret
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
                     export TEST_MANIFEST_VALUES=deploy/kind-values.yaml
-                    make kind
+                    make kind-up
                     export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                     kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/master/example/prometheus-operator-crd/alertmanager.crd.yaml
                     kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/master/example/prometheus-operator-crd/prometheus.crd.yaml
