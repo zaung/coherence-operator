@@ -167,6 +167,7 @@ pipeline {
                     string(credentialsId: 'ocr-docker-username', variable: 'OCR_DOCKER_USERNAME'),
                     string(credentialsId: 'ocr-docker-server',   variable: 'OCR_DOCKER_SERVER')]) {
                     sh '''
+                        export http_proxy=$HTTP_PROXY
                         export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
                         docker login $DOCKER_SERVER -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
                         make kind
@@ -198,14 +199,14 @@ pipeline {
                     setBuildStatus("Running Operator end-to-end local tests...", "PENDING", "${env.PROJECT_URL}", "${env.GIT_COMMIT}")
                 }
                 sh '''
-                    make kind
-                    export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                     export http_proxy=$HTTP_PROXY
                     export CREATE_TEST_NAMESPACE=false
                     export IMAGE_PULL_SECRETS=coherence-k8s-operator-development-secret,ocr-k8s-operator-development-secret
                     export IMAGE_PULL_POLICY=IfNotPresent
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
                     export TEST_MANIFEST_VALUES=deploy/kind-values.yaml
+                    make kind
+                    export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                     make e2e-local-test
                     make script-test
                 '''
@@ -221,14 +222,14 @@ pipeline {
                     setBuildStatus("Running Operator end-to-end tests...", "PENDING", "${env.PROJECT_URL}", "${env.GIT_COMMIT}")
                 }
                 sh '''
-                    make kind
-                    export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                     export http_proxy=$HTTP_PROXY
                     export CREATE_TEST_NAMESPACE=false
                     export IMAGE_PULL_POLICY=IfNotPresent
                     export IMAGE_PULL_SECRETS=coherence-k8s-operator-development-secret,ocr-k8s-operator-development-secret
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
                     export TEST_MANIFEST_VALUES=deploy/kind-values.yaml
+                    make kind
+                    export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                     make e2e-test
                 '''
             }
@@ -243,14 +244,14 @@ pipeline {
                     setBuildStatus("Running Operator Helm tests...", "PENDING", "${env.PROJECT_URL}", "${env.GIT_COMMIT}")
                 }
                 sh '''
-                    make kind
-                    export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                     export http_proxy=$HTTP_PROXY
                     export CREATE_TEST_NAMESPACE=false
                     export IMAGE_PULL_POLICY=IfNotPresent
                     export IMAGE_PULL_SECRETS=coherence-k8s-operator-development-secret,ocr-k8s-operator-development-secret
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
                     export TEST_MANIFEST_VALUES=deploy/kind-values.yaml
+                    make kind
+                    export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                     kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/master/example/prometheus-operator-crd/alertmanager.crd.yaml
                     kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/master/example/prometheus-operator-crd/prometheus.crd.yaml
                     kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/master/example/prometheus-operator-crd/prometheusrule.crd.yaml

@@ -15,6 +15,7 @@ import (
 	"github.com/operator-framework/operator-sdk/pkg/log/zap"
 	framework "github.com/operator-framework/operator-sdk/pkg/test"
 	v1 "github.com/oracle/coherence-operator/pkg/apis/coherence/v1"
+	mgmt "github.com/oracle/coherence-operator/pkg/management"
 	"github.com/oracle/coherence-operator/test/e2e/helper"
 	"io/ioutil"
 	corev1 "k8s.io/api/core/v1"
@@ -33,30 +34,30 @@ type snapshotActionType int
 const (
 	canaryServiceName = "CanaryService"
 
-	create snapshotActionType = iota
-	recover
-	delete
+	createSnapshot snapshotActionType = iota
+	recoverSnapshot
+	deleteSnapshot
 )
 
 // Deploy a CoherenceCluster with persistence enabled (this should enable active persistence).
 // A PVC should be created for the StatefulSet. Create data in some caches, delete the cluster,
 // re-deploy the cluster and assert that the data is recovered.
 func TestActivePersistence(t *testing.T) {
-	assertPersistence("persistence-active.yaml", "persistence-volume", false, false,true, t)
+	assertPersistence("persistence-active.yaml", "persistence-volume", false, false, true, t)
 }
 
 // Deploy a CoherenceCluster with the minimal default configuration. Persistence will be on-demand.
-// Put data in a cache, take a snapshot, delete the data, recover the snapshot,
+// Put data in a cache, take a snapshot, delete the data, recoverSnapshot the snapshot,
 // assert that the data is recovered.
 func TestOnDemandPersistence(t *testing.T) {
-	assertPersistence("persistence-on-demand.yaml", "", true, true,false, t)
+	assertPersistence("persistence-on-demand.yaml", "", true, true, false, t)
 }
 
 // Deploy a CoherenceCluster with snapshot enabled. Persistence will be on-demand,
 // a PVC will be created for the StatefulSet to use for snapshots. Put data in a cache, take a snapshot,
-// delete the cluster, re-deploy the cluster, recover the snapshot, assert that the data is recovered.
+// delete the cluster, re-deploy the cluster, recoverSnapshot the snapshot, assert that the data is recovered.
 func TestSnapshotPersistence(t *testing.T) {
-	assertPersistence("persistence-snapshot.yaml", "snapshot-volume", true, false,true, t)
+	assertPersistence("persistence-snapshot.yaml", "snapshot-volume", true, false, true, t)
 }
 
 func assertPersistence(yamlFile, pVolName string, isSnapshot, isClearCanary, isRestart bool, t *testing.T) {
@@ -86,7 +87,7 @@ func assertPersistence(yamlFile, pVolName string, isSnapshot, isClearCanary, isR
 				if vol.PersistentVolumeClaim != nil {
 					pvcName = vol.PersistentVolumeClaim.ClaimName
 				}
-				break;
+				break
 			}
 		}
 
@@ -102,10 +103,10 @@ func assertPersistence(yamlFile, pVolName string, isSnapshot, isClearCanary, isR
 
 	if isSnapshot {
 		// take a snapshot
-		err = processSnapshotRequest(pods[0], create)
+		err = processSnapshotRequest(pods[0], createSnapshot)
 		g.Expect(err).NotTo(HaveOccurred())
 
-		defer processSnapshotRequest(pods[0], delete)
+		defer processSnapshotRequest(pods[0], deleteSnapshot)
 	}
 
 	if isClearCanary {
@@ -122,7 +123,7 @@ func assertPersistence(yamlFile, pVolName string, isSnapshot, isClearCanary, isR
 	// restart Coherence may be on a different instance, local storage will not work
 	if isRestart && !localStorageRestart {
 		// delete the cluster
-		helper.WaitForCoherenceInternalCleanup(f, ns)
+		_ = helper.WaitForCoherenceInternalCleanup(f, ns)
 
 		// re-deploy the cluster
 		cluster, pods = ensureClusterPods(g, ctx, yamlFile, ns, t)
@@ -131,8 +132,8 @@ func assertPersistence(yamlFile, pVolName string, isSnapshot, isClearCanary, isR
 	}
 
 	if isSnapshot {
-		// recover the snapshot
-		err = processSnapshotRequest(pods[0], recover)
+		// recoverSnapshot the snapshot
+		err = processSnapshotRequest(pods[0], recoverSnapshot)
 		g.Expect(err).NotTo(HaveOccurred())
 	}
 
@@ -182,14 +183,16 @@ func processSnapshotRequest(pod corev1.Pod, actionType snapshotActionType) error
 
 	defer pf.Close()
 
-	url := fmt.Sprintf("http://127.0.0.1:%d/management/coherence/cluster/services/%s/persistence/snapshots/snapshotOne",
-		ports["mgmt-port"], canaryServiceName)
+	port := ports[mgmt.PortName]
+	url := fmt.Sprintf("http://127.0.0.1:%d/management/coherence/cluster/services/%s/persistence/snapshots/snapshotOne", port, canaryServiceName)
+
 	httpMethod := "POST"
-	if actionType == delete {
+
+	switch actionType {
+	case deleteSnapshot:
 		httpMethod = "DELETE"
-	}
-	if actionType == recover {
-		url = url + "/recover"
+	case recoverSnapshot:
+		url = url + "/recoverSnapshot"
 	}
 
 	client := &http.Client{}
@@ -206,29 +209,25 @@ func processSnapshotRequest(pod corev1.Pod, actionType snapshotActionType) error
 		time.Sleep(5 * time.Second)
 	}
 
+	resp, err := client.Do(req)
 	if err != nil {
 		return err
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("snapshot request returned non-200 status %d", resp.StatusCode)
-    }
+		body, _ := ioutil.ReadAll(resp.Body)
+		return fmt.Errorf("snapshot request returned non-200 status %d - %s", resp.StatusCode, body)
+	}
 
 	// wait for idle
 	err = wait.Poll(helper.RetryInterval, helper.Timeout, func() (done bool, err error) {
-		url = fmt.Sprintf("http://127.0.0.1:%d/management/coherence/cluster/services/%s/persistence?fields=operationStatus",
-			ports["mgmt-port"], canaryServiceName)
-		req, err := http.NewRequest("GET", url, nil)
-		if err != nil {
-			fmt.Printf("Cannot create idle check request: %v\n", url)
-			return false, err
-		}
-		resp, err = client.Do(req)
+		url = fmt.Sprintf("http://127.0.0.1:%d/management/coherence/cluster/services/%s/persistence?fields=operationStatus", port, canaryServiceName)
+		resp, err = client.Get(url)
 		if err != nil {
 			fmt.Printf("Error in send idle check request: %v\n", url)
 			return false, err
 		}
-		defer resp.Body.Close()
+
 		if resp.StatusCode != http.StatusOK {
 			fmt.Printf("Idle check request with incorrect status code: %v\n", resp.StatusCode)
 			return false, err
