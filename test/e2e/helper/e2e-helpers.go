@@ -191,7 +191,7 @@ func WaitForCoherenceRoleCondition(f *framework.Framework, namespace, name strin
 	err := wait.Poll(retryInterval, timeout, func() (done bool, err error) {
 		role, err = GetCoherenceRole(f, namespace, name)
 		if err != nil {
-			if apierrors.IsNotFound(err) || strings.Contains(err.Error(), "no matches for kind \"CoherenceRole\"") {
+			if apierrors.IsNotFound(err) || IsNoMatchesForKind(err) {
 				logger.Logf("Waiting for availability of CoherenceRole %s - NotFound\n", name)
 				return false, nil
 			}
@@ -251,7 +251,7 @@ func WaitForDeletion(f *framework.Framework, namespace, name string, resource ru
 			return true, nil
 		case err != nil && !errors.IsNotFound(err):
 			return false, err
-		case err != nil && strings.Contains(err.Error(), "no matches for kind"):
+		case err != nil && IsNoMatchesForKind(err):
 			return true, nil
 		default:
 			fmt.Printf("Waiting for deletion of %s in namespace %s\n", name, namespace)
@@ -367,7 +367,7 @@ func WaitForCoherenceInternalCleanup(f *framework.Framework, namespace string) e
 			}
 			return true, nil
 		} else {
-			if strings.Contains(err.Error(), "no matches for kind") {
+			if IsNoMatchesForKind(err) {
 				return true, nil
 			}
 			fmt.Printf("Error waiting for deletion of CoherenceCluster resources: %s\n", err.Error())
@@ -386,7 +386,7 @@ func WaitForCoherenceInternalCleanup(f *framework.Framework, namespace string) e
 			}
 			return true, nil
 		} else {
-			if strings.Contains(err.Error(), "no matches for kind") {
+			if IsNoMatchesForKind(err) {
 				return true, nil
 			}
 			fmt.Printf("Error waiting for deletion of CoherenceRole resources: %s\n", err.Error())
@@ -406,7 +406,7 @@ func WaitForCoherenceInternalCleanup(f *framework.Framework, namespace string) e
 			}
 			return true, nil
 		} else {
-			if strings.Contains(err.Error(), "no matches for kind") {
+			if IsNoMatchesForKind(err) {
 				return true, nil
 			}
 			fmt.Printf("Error waiting for deletion of CoherenceInternal resources: %s\n", err.Error())
@@ -449,7 +449,7 @@ func WaitForCoherenceInternalCleanup(f *framework.Framework, namespace string) e
 			}
 			return true, nil
 		} else {
-			if strings.Contains(err.Error(), "no matches for kind") {
+			if IsNoMatchesForKind(err) {
 				return true, nil
 			}
 			fmt.Printf("Error waiting for deletion of CoherenceInternal resources: %s\n", err.Error())
@@ -1146,4 +1146,8 @@ func ensureLogsDir(subDir string) (string, error) {
 	}
 
 	return dir, err
+}
+
+func IsNoMatchesForKind(err error) bool {
+	return err != nil && strings.Contains(err.Error(), "no matches for kind")
 }
