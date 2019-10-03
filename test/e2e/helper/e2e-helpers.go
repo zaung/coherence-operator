@@ -307,11 +307,11 @@ func WaitForZeroPodsWithLabel(k8s kubernetes.Interface, namespace, selector stri
 			fmt.Printf("Waiting for zero Pods with label selector '%s' - failed due to %s\n", selector, err.Error())
 			return false, err
 		}
-		hasPods := len(pods) != 0
-		if !hasPods {
+		zeroPods := len(pods) == 0
+		if !zeroPods {
 			fmt.Printf("Waiting for zero Pods with label selector '%s' - found %d\n", selector, len(pods))
 		}
-		return hasPods, nil
+		return zeroPods, nil
 	})
 
 	return err
