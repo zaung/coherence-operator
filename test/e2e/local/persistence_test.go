@@ -122,7 +122,11 @@ func assertPersistence(yamlFile, pVolName string, isSnapshot, isClearCanary, isR
 	// restart Coherence may be on a different instance, local storage will not work
 	if isRestart && !localStorageRestart {
 		// delete the cluster
-		helper.WaitForCoherenceInternalCleanup(f, ns)
+		err = helper.WaitForCoherenceInternalCleanup(f, ns)
+		g.Expect(err).NotTo(HaveOccurred())
+
+		err = helper.WaitForZeroPodsWithLabel(f.KubeClient, ns, "clusterName="+cluster.Name, time.Second*5, time.Minute*5)
+		g.Expect(err).NotTo(HaveOccurred())
 
 		// re-deploy the cluster
 		cluster, pods = ensureClusterPods(g, ctx, yamlFile, ns, t)

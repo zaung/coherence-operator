@@ -297,6 +297,26 @@ func WaitForPodsWithLabel(k8s kubernetes.Interface, namespace, selector string, 
 	return pods, err
 }
 
+// WaitForZeroPodsWithLabel waits for there to be zero Pods matching the specified labels selector to be created.
+func WaitForZeroPodsWithLabel(k8s kubernetes.Interface, namespace, selector string, retryInterval, timeout time.Duration) error {
+	var pods []corev1.Pod
+
+	err := wait.Poll(retryInterval, timeout, func() (done bool, err error) {
+		pods, err = ListPodsWithLabelSelector(k8s, namespace, selector)
+		if err != nil {
+			fmt.Printf("Waiting for zero Pods with label selector '%s' - failed due to %s\n", selector, err.Error())
+			return false, err
+		}
+		hasPods := len(pods) != 0
+		if !hasPods {
+			fmt.Printf("Waiting for zero Pods with label selector '%s' - found %d\n", selector, len(pods))
+		}
+		return hasPods, nil
+	})
+
+	return err
+}
+
 // List the Coherence Cluster Pods that exist for a given label selector.
 func ListPodsWithLabelSelector(k8s kubernetes.Interface, namespace, selector string) ([]corev1.Pod, error) {
 	opts := metav1.ListOptions{LabelSelector: selector}
