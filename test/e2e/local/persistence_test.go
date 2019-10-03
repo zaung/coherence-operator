@@ -176,6 +176,8 @@ func ensureClusterPods(g *GomegaWithT, ctx *framework.TestCtx, yamlFile, ns stri
 }
 
 func processSnapshotRequest(pod corev1.Pod, actionType snapshotActionType) error {
+	var err error
+
 	pf, ports, err := helper.StartPortForwarderForPod(&pod)
 	if err != nil {
 		return err
@@ -197,19 +199,19 @@ func processSnapshotRequest(pod corev1.Pod, actionType snapshotActionType) error
 
 	client := &http.Client{}
 	var resp *http.Response
+	var req *http.Request
 	// try a max of 5 times
 	for i := 0; i < 5; i++ {
-		req, err := http.NewRequest(httpMethod, url, nil)
+		req, err = http.NewRequest(httpMethod, url, nil)
 		if err == nil {
 			resp, err = client.Do(req)
 			if err == nil {
-				break;
+				break
 			}
 		}
 		time.Sleep(5 * time.Second)
 	}
 
-	resp, err := client.Do(req)
 	if err != nil {
 		return err
 	}
