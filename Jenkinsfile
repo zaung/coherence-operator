@@ -85,6 +85,7 @@ pipeline {
                     make clean
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
                     export TEST_MANIFEST_VALUES=deploy/kind-values.yaml
+                    export TEST_STORAGE_CLASS=local-path
                     make build-all
                     '''
                 }
@@ -110,6 +111,7 @@ pipeline {
                     sh '''
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
                     export TEST_MANIFEST_VALUES=deploy/kind-values.yaml
+                    export TEST_STORAGE_CLASS=local-path
                     make test-all
                     '''
                 }
@@ -205,6 +207,7 @@ pipeline {
                     export IMAGE_PULL_POLICY=IfNotPresent
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
                     export TEST_MANIFEST_VALUES=deploy/kind-values.yaml
+                    export TEST_STORAGE_CLASS=local-path
                     make kind-up
                     export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                     make e2e-local-test
@@ -228,6 +231,7 @@ pipeline {
                     export IMAGE_PULL_SECRETS=coherence-k8s-operator-development-secret,ocr-k8s-operator-development-secret
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
                     export TEST_MANIFEST_VALUES=deploy/kind-values.yaml
+                    export TEST_STORAGE_CLASS=local-path
                     make kind-up
                     export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                     make e2e-test
@@ -250,6 +254,7 @@ pipeline {
                     export IMAGE_PULL_SECRETS=coherence-k8s-operator-development-secret,ocr-k8s-operator-development-secret
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
                     export TEST_MANIFEST_VALUES=deploy/kind-values.yaml
+                    export TEST_STORAGE_CLASS=local-path
                     make kind-up
                     export KUBECONFIG="$(kind get kubeconfig-path --name="operator-test")"
                     kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/master/example/prometheus-operator-crd/alertmanager.crd.yaml

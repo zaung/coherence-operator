@@ -23,6 +23,10 @@ then
   kubectl label node operator-test-worker2 failure-domain.beta.kubernetes.io/region=jenkins --overwrite
   kubectl label node operator-test-worker3 failure-domain.beta.kubernetes.io/zone=zoned-out --overwrite
   kubectl label node operator-test-worker3 failure-domain.beta.kubernetes.io/region=jenkins --overwrite
+
+  kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+  LOCAL_STORAGE_POD=$(kubectl -n local-path-storage get pod -o name)
+  kubectl -n local-path-storage  wait --for=condition=Ready ${LOCAL_STORAGE_POD}
 else
     echo "Kind cluster operator-test exists"
 fi

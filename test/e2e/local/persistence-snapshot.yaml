@@ -17,6 +17,7 @@ spec:
       snapshot:
         enabled: true
         persistentVolumeClaim:
+          storageClassName: ${TEST_STORAGE_CLASS}
           accessModes:
           - ReadWriteOnce
           resources:
