@@ -55,6 +55,11 @@ PRE_RELEASE      ?= true
 # Coherence Operator chart
 PROMETHEUS_HELMCHART_VERSION ?= 5.7.0
 
+# The EFK images to use
+ELASTICSEARCH_IMAGE ?= docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.0
+FLUENTD_IMAGE       ?= fluent/fluentd-kubernetes-daemonset:v1.3.3-debian-elasticsearch-1.3
+KIBANA_IMAGE        ?= docker.elastic.co/kibana/kibana-oss:6.6.0
+
 # Extra arguments to pass to the go test command for the various test steps.
 # For example, when running make e2e-test we can run just a single test such
 # as the zone test using the go test -run=regex argument like this
@@ -897,7 +902,7 @@ endif
 # Initialise a Kind k8s cluster
 # ---------------------------------------------------------------------------
 .PHONY: kind-up
-kind-up: kind-create-cluster kind-upload-coherence kind-upload-operator
+kind-up: kind-create-cluster kind-upload-coherence kind-upload-operator kind-upload-efk
 
 .PHONY: kind-create-cluster
 export HELM_COHERENCE_IMAGE := $(HELM_COHERENCE_IMAGE)
@@ -925,6 +930,18 @@ kind-upload-operator:
 	kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 "${OPERATOR_IMAGE}"
 	kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 "${UTILS_IMAGE}"
 	kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 "${TEST_USER_IMAGE}"
+
+.PHONY: kind-upload-efk
+export ELASTICSEARCH_IMAGE := $(ELASTICSEARCH_IMAGE)
+export FLUENTD_IMAGE := $(FLUENTD_IMAGE)
+export KIBANA_IMAGE := $(KIBANA_IMAGE)
+kind-upload-efk:
+	docker pull ${ELASTICSEARCH_IMAGE}
+	kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 "${ELASTICSEARCH_IMAGE}"
+	docker pull ${FLUENTD_IMAGE}
+	kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 "${FLUENTD_IMAGE}"
+	docker pull ${KIBANA_IMAGE}
+	kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 "${KIBANA_IMAGE}"
 
 # ---------------------------------------------------------------------------
 # Clean-up a Kind k8s cluster

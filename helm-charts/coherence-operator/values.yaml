@@ -74,7 +74,7 @@ dashboardImport:
 # These parameters are ignored if 'installEFK' is false
 # or elasticsearchEndpoinit is set.
 elasticsearch:
-  image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.0
+  image: ${ELASTICSEARCH_IMAGE}
   # imagePullPolicy controls the K8s container spec's pull policy
   # If not set the pull policy is "IfNotPresent".
   imagePullPolicy:
@@ -102,7 +102,7 @@ elasticsearchEndpoint:
 # These parameters are ignored if 'installEFK' is false
 # or elasticsearchEndpoinit is set.
 kibana:
-  image: docker.elastic.co/kibana/kibana-oss:6.6.0
+  image: ${KIBANA_IMAGE}
   # imagePullPolicy controls the K8s container spec's pull policy
   # If not set the pull policy is "IfNotPresent".
   imagePullPolicy:

@@ -259,7 +259,7 @@ logging:
     # fluentd.enabled determines whether Fluentd log capture is enabled
     enabled: false
     # fluentd.image is the name of the Fluentd image to use in the logging side-car container
-    image: fluent/fluentd-kubernetes-daemonset:v1.3.3-debian-elasticsearch-1.3
+    image: ${FLUENTD_IMAGE}
     # imagePullPolicy controls the K8s container spec's pull policy
     # If not set the pull policy is "IfNotPresent".
     imagePullPolicy:
