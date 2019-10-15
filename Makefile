@@ -939,12 +939,12 @@ export ELASTICSEARCH_IMAGE := $(ELASTICSEARCH_IMAGE)
 export FLUENTD_IMAGE := $(FLUENTD_IMAGE)
 export KIBANA_IMAGE := $(KIBANA_IMAGE)
 kind-upload-efk:
-	docker pull ${ELASTICSEARCH_IMAGE}
-	kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 "${ELASTICSEARCH_IMAGE}"
+#	docker pull ${ELASTICSEARCH_IMAGE}
+#	kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 "${ELASTICSEARCH_IMAGE}"
 	docker pull ${FLUENTD_IMAGE}
 	kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 "${FLUENTD_IMAGE}"
-	docker pull ${KIBANA_IMAGE}
-	kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 "${KIBANA_IMAGE}"
+#	docker pull ${KIBANA_IMAGE}
+#	kind load docker-image --name operator-test --nodes operator-test-worker,operator-test-worker2,operator-test-worker3 "${KIBANA_IMAGE}"
 
 # ---------------------------------------------------------------------------
 # Clean-up a Kind k8s cluster
