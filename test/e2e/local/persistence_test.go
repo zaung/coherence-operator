@@ -22,7 +22,7 @@ import (
 	"k8s.io/klog"
 	"net/http"
 	"os"
-	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
+	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"strconv"
 	"testing"
 	"time"
@@ -42,21 +42,21 @@ const (
 // A PVC should be created for the StatefulSet. Create data in some caches, delete the cluster,
 // re-deploy the cluster and assert that the data is recovered.
 func TestActivePersistence(t *testing.T) {
-	assertPersistence("persistence-active.yaml", "persistence-volume", false, false,true, t)
+	assertPersistence("persistence-active.yaml", "persistence-volume", false, false, true, t)
 }
 
 // Deploy a CoherenceCluster with the minimal default configuration. Persistence will be on-demand.
 // Put data in a cache, take a snapshot, delete the data, recover the snapshot,
 // assert that the data is recovered.
 func TestOnDemandPersistence(t *testing.T) {
-	assertPersistence("persistence-on-demand.yaml", "", true, true,false, t)
+	assertPersistence("persistence-on-demand.yaml", "", true, true, false, t)
 }
 
 // Deploy a CoherenceCluster with snapshot enabled. Persistence will be on-demand,
 // a PVC will be created for the StatefulSet to use for snapshots. Put data in a cache, take a snapshot,
 // delete the cluster, re-deploy the cluster, recover the snapshot, assert that the data is recovered.
 func TestSnapshotPersistence(t *testing.T) {
-	assertPersistence("persistence-snapshot.yaml", "snapshot-volume", true, false,true, t)
+	assertPersistence("persistence-snapshot.yaml", "snapshot-volume", true, false, true, t)
 }
 
 func assertPersistence(yamlFile, pVolName string, isSnapshot, isClearCanary, isRestart bool, t *testing.T) {
@@ -86,7 +86,7 @@ func assertPersistence(yamlFile, pVolName string, isSnapshot, isClearCanary, isR
 				if vol.PersistentVolumeClaim != nil {
 					pvcName = vol.PersistentVolumeClaim.ClaimName
 				}
-				break;
+				break
 			}
 		}
 
@@ -200,7 +200,7 @@ func processSnapshotRequest(pod corev1.Pod, actionType snapshotActionType) error
 		if err == nil {
 			resp, err = client.Do(req)
 			if err == nil {
-				break;
+				break
 			}
 		}
 		time.Sleep(5 * time.Second)
@@ -212,7 +212,7 @@ func processSnapshotRequest(pod corev1.Pod, actionType snapshotActionType) error
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("snapshot request returned non-200 status %d", resp.StatusCode)
-    }
+	}
 
 	// wait for idle
 	err = wait.Poll(helper.RetryInterval, helper.Timeout, func() (done bool, err error) {
