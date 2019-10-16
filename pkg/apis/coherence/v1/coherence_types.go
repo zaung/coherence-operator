@@ -90,6 +90,7 @@ type ApplicationSpec struct {
 	// +optional
 	Main *string `json:"main,omitempty"`
 	// Args is the optional arguments to pass to the main class.
+	// +listType=atomic
 	// +optional
 	Args []string `json:"args,omitempty"`
 	// The inlined application image definition
@@ -267,6 +268,7 @@ func (in *CoherenceSpec) DeepCopyWithDefaults(defaults *CoherenceSpec) *Coherenc
 // +k8s:openapi-gen=true
 type JVMSpec struct {
 	// Args specifies the options (System properties, -XX: args etc) to pass to the JVM.
+	// +listType=atomic
 	// +optional
 	Args []string `json:"args,omitempty"`
 	// The settings for enabling debug mode in the JVM.
@@ -1217,6 +1219,7 @@ type ServiceSpec struct {
 	// load-balancer will be restricted to the specified client IPs. This field will be ignored if the
 	// cloud-provider does not support the feature."
 	// More info: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/
+	// +listType=atomic
 	// +optional
 	LoadBalancerSourceRanges []string `json:"loadBalancerSourceRanges,omitempty"`
 	// externalName is the external reference that kubedns or equivalent will
@@ -1500,7 +1503,19 @@ type ReadinessProbeSpec struct {
 	FailureThreshold *int32 `json:"failureThreshold,omitempty"`
 }
 
-type ProbeHandler corev1.Handler
+type ProbeHandler struct {
+	// One and only one of the following should be specified.
+	// Exec specifies the action to take.
+	// +optional
+	Exec *corev1.ExecAction `json:"exec,omitempty"`
+	// HTTPGet specifies the http request to perform.
+	// +optional
+	HTTPGet *corev1.HTTPGetAction `json:"httpGet,omitempty"`
+	// TCPSocket specifies an action involving a TCP port.
+	// TCP hooks not yet supported
+	// +optional
+	TCPSocket *corev1.TCPSocketAction `json:"tcpSocket,omitempty"`
+}
 
 // DeepCopyWithDefaults returns a copy of this ReadinessProbeSpec struct with any nil or not set values set
 // by the corresponding value in the defaults ReadinessProbeSpec struct.
@@ -1630,4 +1645,9 @@ const (
 
 // LocalObjectReference contains enough information to let you locate the
 // referenced object inside the same namespace.
-type LocalObjectReference corev1.LocalObjectReference
+type LocalObjectReference struct {
+	// Name of the referent.
+	// More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+	// +optional
+	Name string `json:"name,omitempty" protobuf:"bytes,1,opt,name=name"`
+}

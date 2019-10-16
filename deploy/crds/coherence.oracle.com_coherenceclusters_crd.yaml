@@ -3739,9 +3739,13 @@ spec:
                 the case of docker, only DockerConfig type secrets are honored. More
                 info: https://kubernetes.io/docs/concepts/containers/images#specifying-imagepullsecrets-on-a-pod'
               items:
-                $ref: '#/definitions/k8s.io~1api~1core~1v1~0LocalObjectReference'
                 description: LocalObjectReference contains enough information to let
                   you locate the referenced object inside the same namespace.
+                properties:
+                  name:
+                    description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                    type: string
+                type: object
               type: array
             jvm:
               description: The JVM specific options
@@ -5049,15 +5053,71 @@ spec:
                 More info: http://kubernetes.io/docs/user-guide/labels'
               type: object
             livenessProbe:
-              $ref: '#/definitions/k8s.io~1api~1core~1v1~0Handler'
               description: 'The liveness probe config to be used for the Pods in this
                 role. ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/'
               properties:
+                exec:
+                  description: One and only one of the following should be specified.
+                    Exec specifies the action to take.
+                  properties:
+                    command:
+                      description: Command is the command line to execute inside the
+                        container, the working directory for the command  is root
+                        ('/') in the container's filesystem. The command is simply
+                        exec'd, it is not run inside a shell, so traditional shell
+                        instructions ('|', etc) won't work. To use a shell, you need
+                        to explicitly call out to that shell. Exit status of 0 is
+                        treated as live/healthy and non-zero is unhealthy.
+                      items:
+                        type: string
+                      type: array
+                  type: object
                 failureThreshold:
                   description: Minimum consecutive failures for the probe to be considered
                     failed after having succeeded.
                   format: int32
                   type: integer
+                httpGet:
+                  description: HTTPGet specifies the http request to perform.
+                  properties:
+                    host:
+                      description: Host name to connect to, defaults to the pod IP.
+                        You probably want to set "Host" in httpHeaders instead.
+                      type: string
+                    httpHeaders:
+                      description: Custom headers to set in the request. HTTP allows
+                        repeated headers.
+                      items:
+                        description: HTTPHeader describes a custom header to be used
+                          in HTTP probes
+                        properties:
+                          name:
+                            description: The header field name
+                            type: string
+                          value:
+                            description: The header field value
+                            type: string
+                        required:
+                        - name
+                        - value
+                        type: object
+                      type: array
+                    path:
+                      description: Path to access on the HTTP server.
+                      type: string
+                    port:
+                      anyOf:
+                      - type: string
+                      - type: integer
+                      description: Name or number of the port to access on the container.
+                        Number must be in the range 1 to 65535. Name must be an IANA_SVC_NAME.
+                    scheme:
+                      description: Scheme to use for connecting to the host. Defaults
+                        to HTTP.
+                      type: string
+                  required:
+                  - port
+                  type: object
                 initialDelaySeconds:
                   description: 'Number of seconds after the container has started
                     before liveness probes are initiated. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes'
@@ -5072,6 +5132,23 @@ spec:
                     successful after having failed.
                   format: int32
                   type: integer
+                tcpSocket:
+                  description: TCPSocket specifies an action involving a TCP port.
+                    TCP hooks not yet supported
+                  properties:
+                    host:
+                      description: 'Optional: Host name to connect to, defaults to
+                        the pod IP.'
+                      type: string
+                    port:
+                      anyOf:
+                      - type: string
+                      - type: integer
+                      description: Number or name of the port to access on the container.
+                        Number must be in the range 1 to 65535. Name must be an IANA_SVC_NAME.
+                  required:
+                  - port
+                  type: object
                 timeoutSeconds:
                   description: 'Number of seconds after which the probe times out.
                     More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes'
@@ -5262,15 +5339,71 @@ spec:
                 type: object
               type: array
             readinessProbe:
-              $ref: '#/definitions/k8s.io~1api~1core~1v1~0Handler'
               description: 'The readiness probe config to be used for the Pods in
                 this role. ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/'
               properties:
+                exec:
+                  description: One and only one of the following should be specified.
+                    Exec specifies the action to take.
+                  properties:
+                    command:
+                      description: Command is the command line to execute inside the
+                        container, the working directory for the command  is root
+                        ('/') in the container's filesystem. The command is simply
+                        exec'd, it is not run inside a shell, so traditional shell
+                        instructions ('|', etc) won't work. To use a shell, you need
+                        to explicitly call out to that shell. Exit status of 0 is
+                        treated as live/healthy and non-zero is unhealthy.
+                      items:
+                        type: string
+                      type: array
+                  type: object
                 failureThreshold:
                   description: Minimum consecutive failures for the probe to be considered
                     failed after having succeeded.
                   format: int32
                   type: integer
+                httpGet:
+                  description: HTTPGet specifies the http request to perform.
+                  properties:
+                    host:
+                      description: Host name to connect to, defaults to the pod IP.
+                        You probably want to set "Host" in httpHeaders instead.
+                      type: string
+                    httpHeaders:
+                      description: Custom headers to set in the request. HTTP allows
+                        repeated headers.
+                      items:
+                        description: HTTPHeader describes a custom header to be used
+                          in HTTP probes
+                        properties:
+                          name:
+                            description: The header field name
+                            type: string
+                          value:
+                            description: The header field value
+                            type: string
+                        required:
+                        - name
+                        - value
+                        type: object
+                      type: array
+                    path:
+                      description: Path to access on the HTTP server.
+                      type: string
+                    port:
+                      anyOf:
+                      - type: string
+                      - type: integer
+                      description: Name or number of the port to access on the container.
+                        Number must be in the range 1 to 65535. Name must be an IANA_SVC_NAME.
+                    scheme:
+                      description: Scheme to use for connecting to the host. Defaults
+                        to HTTP.
+                      type: string
+                  required:
+                  - port
+                  type: object
                 initialDelaySeconds:
                   description: 'Number of seconds after the container has started
                     before liveness probes are initiated. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes'
@@ -5285,6 +5418,23 @@ spec:
                     successful after having failed.
                   format: int32
                   type: integer
+                tcpSocket:
+                  description: TCPSocket specifies an action involving a TCP port.
+                    TCP hooks not yet supported
+                  properties:
+                    host:
+                      description: 'Optional: Host name to connect to, defaults to
+                        the pod IP.'
+                      type: string
+                    port:
+                      anyOf:
+                      - type: string
+                      - type: integer
+                      description: Number or name of the port to access on the container.
+                        Number must be in the range 1 to 65535. Name must be an IANA_SVC_NAME.
+                  required:
+                  - port
+                  type: object
                 timeoutSeconds:
                   description: 'Number of seconds after which the probe times out.
                     More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes'
@@ -10661,15 +10811,74 @@ spec:
                       for the cluster. More info: http://kubernetes.io/docs/user-guide/labels'
                     type: object
                   livenessProbe:
-                    $ref: '#/definitions/k8s.io~1api~1core~1v1~0Handler'
                     description: 'The liveness probe config to be used for the Pods
                       in this role. ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/'
                     properties:
+                      exec:
+                        description: One and only one of the following should be specified.
+                          Exec specifies the action to take.
+                        properties:
+                          command:
+                            description: Command is the command line to execute inside
+                              the container, the working directory for the command  is
+                              root ('/') in the container's filesystem. The command
+                              is simply exec'd, it is not run inside a shell, so traditional
+                              shell instructions ('|', etc) won't work. To use a shell,
+                              you need to explicitly call out to that shell. Exit
+                              status of 0 is treated as live/healthy and non-zero
+                              is unhealthy.
+                            items:
+                              type: string
+                            type: array
+                        type: object
                       failureThreshold:
                         description: Minimum consecutive failures for the probe to
                           be considered failed after having succeeded.
                         format: int32
                         type: integer
+                      httpGet:
+                        description: HTTPGet specifies the http request to perform.
+                        properties:
+                          host:
+                            description: Host name to connect to, defaults to the
+                              pod IP. You probably want to set "Host" in httpHeaders
+                              instead.
+                            type: string
+                          httpHeaders:
+                            description: Custom headers to set in the request. HTTP
+                              allows repeated headers.
+                            items:
+                              description: HTTPHeader describes a custom header to
+                                be used in HTTP probes
+                              properties:
+                                name:
+                                  description: The header field name
+                                  type: string
+                                value:
+                                  description: The header field value
+                                  type: string
+                              required:
+                              - name
+                              - value
+                              type: object
+                            type: array
+                          path:
+                            description: Path to access on the HTTP server.
+                            type: string
+                          port:
+                            anyOf:
+                            - type: string
+                            - type: integer
+                            description: Name or number of the port to access on the
+                              container. Number must be in the range 1 to 65535. Name
+                              must be an IANA_SVC_NAME.
+                          scheme:
+                            description: Scheme to use for connecting to the host.
+                              Defaults to HTTP.
+                            type: string
+                        required:
+                        - port
+                        type: object
                       initialDelaySeconds:
                         description: 'Number of seconds after the container has started
                           before liveness probes are initiated. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes'
@@ -10684,6 +10893,24 @@ spec:
                           be considered successful after having failed.
                         format: int32
                         type: integer
+                      tcpSocket:
+                        description: TCPSocket specifies an action involving a TCP
+                          port. TCP hooks not yet supported
+                        properties:
+                          host:
+                            description: 'Optional: Host name to connect to, defaults
+                              to the pod IP.'
+                            type: string
+                          port:
+                            anyOf:
+                            - type: string
+                            - type: integer
+                            description: Number or name of the port to access on the
+                              container. Number must be in the range 1 to 65535. Name
+                              must be an IANA_SVC_NAME.
+                        required:
+                        - port
+                        type: object
                       timeoutSeconds:
                         description: 'Number of seconds after which the probe times
                           out. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes'
@@ -10877,15 +11104,74 @@ spec:
                       type: object
                     type: array
                   readinessProbe:
-                    $ref: '#/definitions/k8s.io~1api~1core~1v1~0Handler'
                     description: 'The readiness probe config to be used for the Pods
                       in this role. ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/'
                     properties:
+                      exec:
+                        description: One and only one of the following should be specified.
+                          Exec specifies the action to take.
+                        properties:
+                          command:
+                            description: Command is the command line to execute inside
+                              the container, the working directory for the command  is
+                              root ('/') in the container's filesystem. The command
+                              is simply exec'd, it is not run inside a shell, so traditional
+                              shell instructions ('|', etc) won't work. To use a shell,
+                              you need to explicitly call out to that shell. Exit
+                              status of 0 is treated as live/healthy and non-zero
+                              is unhealthy.
+                            items:
+                              type: string
+                            type: array
+                        type: object
                       failureThreshold:
                         description: Minimum consecutive failures for the probe to
                           be considered failed after having succeeded.
                         format: int32
                         type: integer
+                      httpGet:
+                        description: HTTPGet specifies the http request to perform.
+                        properties:
+                          host:
+                            description: Host name to connect to, defaults to the
+                              pod IP. You probably want to set "Host" in httpHeaders
+                              instead.
+                            type: string
+                          httpHeaders:
+                            description: Custom headers to set in the request. HTTP
+                              allows repeated headers.
+                            items:
+                              description: HTTPHeader describes a custom header to
+                                be used in HTTP probes
+                              properties:
+                                name:
+                                  description: The header field name
+                                  type: string
+                                value:
+                                  description: The header field value
+                                  type: string
+                              required:
+                              - name
+                              - value
+                              type: object
+                            type: array
+                          path:
+                            description: Path to access on the HTTP server.
+                            type: string
+                          port:
+                            anyOf:
+                            - type: string
+                            - type: integer
+                            description: Name or number of the port to access on the
+                              container. Number must be in the range 1 to 65535. Name
+                              must be an IANA_SVC_NAME.
+                          scheme:
+                            description: Scheme to use for connecting to the host.
+                              Defaults to HTTP.
+                            type: string
+                        required:
+                        - port
+                        type: object
                       initialDelaySeconds:
                         description: 'Number of seconds after the container has started
                           before liveness probes are initiated. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes'
@@ -10900,6 +11186,24 @@ spec:
                           be considered successful after having failed.
                         format: int32
                         type: integer
+                      tcpSocket:
+                        description: TCPSocket specifies an action involving a TCP
+                          port. TCP hooks not yet supported
+                        properties:
+                          host:
+                            description: 'Optional: Host name to connect to, defaults
+                              to the pod IP.'
+                            type: string
+                          port:
+                            anyOf:
+                            - type: string
+                            - type: integer
+                            description: Number or name of the port to access on the
+                              container. Number must be in the range 1 to 65535. Name
+                              must be an IANA_SVC_NAME.
+                        required:
+                        - port
+                        type: object
                       timeoutSeconds:
                         description: 'Number of seconds after which the probe times
                           out. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes'

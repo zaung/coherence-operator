@@ -60,6 +60,11 @@ func schema_pkg_apis_coherence_v1_ApplicationSpec(ref common.ReferenceCallback) 
 						},
 					},
 					"args": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-type": "atomic",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "Args is the optional arguments to pass to the main class.",
 							Type:        []string{"array"},
@@ -166,6 +171,12 @@ func schema_pkg_apis_coherence_v1_CoherenceClusterSpec(ref common.ReferenceCallb
 				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
 					"imagePullSecrets": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "name",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "ImagePullSecrets is an optional list of references to secrets in the same namespace to use for pulling any of the images used by this PodSpec. If specified, these secrets will be passed to individual puller implementations for them to use. For example, in the case of docker, only DockerConfig type secrets are honored. More info: https://kubernetes.io/docs/concepts/containers/images#specifying-imagepullsecrets-on-a-pod",
 							Type:        []string{"array"},
@@ -244,6 +255,12 @@ func schema_pkg_apis_coherence_v1_CoherenceClusterSpec(ref common.ReferenceCallb
 						},
 					},
 					"ports": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "name",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "Ports specifies additional port mappings for the Pod and additional Services for those ports",
 							Type:        []string{"array"},
@@ -257,6 +274,12 @@ func schema_pkg_apis_coherence_v1_CoherenceClusterSpec(ref common.ReferenceCallb
 						},
 					},
 					"env": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "name",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "Env is additional environment variable mappings that will be passed to the Coherence container in the Pod To specify extra variables add them as name value pairs the same as they would be added to a Pod containers spec, for example these values:\n\nenv:\n  - name \"FOO\"\n    value: \"foo-value\"\n  - name: \"BAR\"\n    value \"bar-value\"\n\nwill add the environment variable mappings FOO=\"foo-value\" and BAR=\"bar-value\"",
 							Type:        []string{"array"},
@@ -331,6 +354,12 @@ func schema_pkg_apis_coherence_v1_CoherenceClusterSpec(ref common.ReferenceCallb
 						},
 					},
 					"volumes": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "name",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "Volumes defines extra volume mappings that will be added to the Coherence Pod.\n  The content of this yaml should match the normal k8s volumes section of a Pod definition\n  as described in https://kubernetes.io/docs/concepts/storage/volumes/",
 							Type:        []string{"array"},
@@ -344,6 +373,12 @@ func schema_pkg_apis_coherence_v1_CoherenceClusterSpec(ref common.ReferenceCallb
 						},
 					},
 					"volumeClaimTemplates": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "metaData.name",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "VolumeClaimTemplates defines extra PVC mappings that will be added to the Coherence Pod.\n  The content of this yaml should match the normal k8s volumeClaimTemplates section of a Pod definition\n  as described in https://kubernetes.io/docs/concepts/storage/persistent-volumes/",
 							Type:        []string{"array"},
@@ -357,6 +392,12 @@ func schema_pkg_apis_coherence_v1_CoherenceClusterSpec(ref common.ReferenceCallb
 						},
 					},
 					"volumeMounts": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "name",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "VolumeMounts defines extra volume mounts to map to the additional volumes or PVCs declared above\n  in store.volumes and store.volumeClaimTemplates",
 							Type:        []string{"array"},
@@ -391,6 +432,12 @@ func schema_pkg_apis_coherence_v1_CoherenceClusterSpec(ref common.ReferenceCallb
 						},
 					},
 					"tolerations": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "key",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "Tolerations is for nodes that have taints on them.\n  Useful if you want to dedicate nodes to just run the coherence container\nFor example:\n  tolerations:\n  - key: \"key\"\n    operator: \"Equal\"\n    value: \"value\"\n    effect: \"NoSchedule\"\n\n  ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/",
 							Type:        []string{"array"},
@@ -404,6 +451,12 @@ func schema_pkg_apis_coherence_v1_CoherenceClusterSpec(ref common.ReferenceCallb
 						},
 					},
 					"roles": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "role",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "Roles is the list of different roles in the cluster There must be at least one role in a cluster.",
 							Type:        []string{"array"},
@@ -538,6 +591,12 @@ func schema_pkg_apis_coherence_v1_CoherenceInternalSpec(ref common.ReferenceCall
 						},
 					},
 					"imagePullSecrets": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "name",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "ImagePullSecrets is an optional list of references to secrets in the same namespace to use for pulling any of the images used by this PodSpec. If specified, these secrets will be passed to individual puller implementations for them to use. For example, in the case of docker, only DockerConfig type secrets are honored. More info: https://kubernetes.io/docs/concepts/containers/images#specifying-imagepullsecrets-on-a-pod",
 							Type:        []string{"array"},
@@ -602,6 +661,12 @@ func schema_pkg_apis_coherence_v1_CoherenceInternalSpec(ref common.ReferenceCall
 						},
 					},
 					"ports": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "name",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "Ports specifies additional port mappings for the Pod and additional Services for those ports",
 							Type:        []string{"array"},
@@ -615,6 +680,12 @@ func schema_pkg_apis_coherence_v1_CoherenceInternalSpec(ref common.ReferenceCall
 						},
 					},
 					"env": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "name",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "Env is additional environment variable mappings that will be passed to the Coherence container in the Pod To specify extra variables add them as name value pairs the same as they would be added to a Pod containers spec, for example these values:\n\nenv:\n  - name \"FOO\"\n    value: \"foo-value\"\n  - name: \"BAR\"\n    value \"bar-value\"\n\nwill add the environment variable mappings FOO=\"foo-value\" and BAR=\"bar-value\"",
 							Type:        []string{"array"},
@@ -689,6 +760,12 @@ func schema_pkg_apis_coherence_v1_CoherenceInternalSpec(ref common.ReferenceCall
 						},
 					},
 					"volumes": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "name",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "Volumes defines extra volume mappings that will be added to the Coherence Pod.\n  The content of this yaml should match the normal k8s volumes section of a Pod definition\n  as described in https://kubernetes.io/docs/concepts/storage/volumes/",
 							Type:        []string{"array"},
@@ -702,6 +779,12 @@ func schema_pkg_apis_coherence_v1_CoherenceInternalSpec(ref common.ReferenceCall
 						},
 					},
 					"volumeClaimTemplates": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "metaData.name",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "VolumeClaimTemplates defines extra PVC mappings that will be added to the Coherence Pod.\n  The content of this yaml should match the normal k8s volumeClaimTemplates section of a Pod definition\n  as described in https://kubernetes.io/docs/concepts/storage/persistent-volumes/",
 							Type:        []string{"array"},
@@ -715,6 +798,12 @@ func schema_pkg_apis_coherence_v1_CoherenceInternalSpec(ref common.ReferenceCall
 						},
 					},
 					"volumeMounts": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "name",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "VolumeMounts defines extra volume mounts to map to the additional volumes or PVCs declared above\n  in store.volumes and store.volumeClaimTemplates",
 							Type:        []string{"array"},
@@ -749,6 +838,12 @@ func schema_pkg_apis_coherence_v1_CoherenceInternalSpec(ref common.ReferenceCall
 						},
 					},
 					"tolerations": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "key",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "Tolerations is for nodes that have taints on them.\n  Useful if you want to dedicate nodes to just run the coherence container\nFor example:\n  tolerations:\n  - key: \"key\"\n    operator: \"Equal\"\n    value: \"value\"\n    effect: \"NoSchedule\"\n\n  ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/",
 							Type:        []string{"array"},
@@ -877,6 +972,12 @@ func schema_pkg_apis_coherence_v1_CoherenceRoleSpec(ref common.ReferenceCallback
 						},
 					},
 					"ports": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "name",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "Ports specifies additional port mappings for the Pod and additional Services for those ports",
 							Type:        []string{"array"},
@@ -890,6 +991,12 @@ func schema_pkg_apis_coherence_v1_CoherenceRoleSpec(ref common.ReferenceCallback
 						},
 					},
 					"env": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "name",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "Env is additional environment variable mappings that will be passed to the Coherence container in the Pod To specify extra variables add them as name value pairs the same as they would be added to a Pod containers spec, for example these values:\n\nenv:\n  - name \"FOO\"\n    value: \"foo-value\"\n  - name: \"BAR\"\n    value \"bar-value\"\n\nwill add the environment variable mappings FOO=\"foo-value\" and BAR=\"bar-value\"",
 							Type:        []string{"array"},
@@ -964,6 +1071,12 @@ func schema_pkg_apis_coherence_v1_CoherenceRoleSpec(ref common.ReferenceCallback
 						},
 					},
 					"volumes": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "name",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "Volumes defines extra volume mappings that will be added to the Coherence Pod.\n  The content of this yaml should match the normal k8s volumes section of a Pod definition\n  as described in https://kubernetes.io/docs/concepts/storage/volumes/",
 							Type:        []string{"array"},
@@ -977,6 +1090,12 @@ func schema_pkg_apis_coherence_v1_CoherenceRoleSpec(ref common.ReferenceCallback
 						},
 					},
 					"volumeClaimTemplates": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "metaData.name",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "VolumeClaimTemplates defines extra PVC mappings that will be added to the Coherence Pod.\n  The content of this yaml should match the normal k8s volumeClaimTemplates section of a Pod definition\n  as described in https://kubernetes.io/docs/concepts/storage/persistent-volumes/",
 							Type:        []string{"array"},
@@ -990,6 +1109,12 @@ func schema_pkg_apis_coherence_v1_CoherenceRoleSpec(ref common.ReferenceCallback
 						},
 					},
 					"volumeMounts": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "name",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "VolumeMounts defines extra volume mounts to map to the additional volumes or PVCs declared above\n  in store.volumes and store.volumeClaimTemplates",
 							Type:        []string{"array"},
@@ -1024,6 +1149,12 @@ func schema_pkg_apis_coherence_v1_CoherenceRoleSpec(ref common.ReferenceCallback
 						},
 					},
 					"tolerations": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-map-keys": "key",
+								"x-kubernetes-list-type":     "map",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "Tolerations is for nodes that have taints on them.\n  Useful if you want to dedicate nodes to just run the coherence container\nFor example:\n  tolerations:\n  - key: \"key\"\n    operator: \"Equal\"\n    value: \"value\"\n    effect: \"NoSchedule\"\n\n  ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/",
 							Type:        []string{"array"},
@@ -1264,6 +1395,11 @@ func schema_pkg_apis_coherence_v1_JVMSpec(ref common.ReferenceCallback) common.O
 				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
 					"args": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-type": "atomic",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "Args specifies the options (System properties, -XX: args etc) to pass to the JVM.",
 							Type:        []string{"array"},
@@ -1848,6 +1984,11 @@ func schema_pkg_apis_coherence_v1_ServiceSpec(ref common.ReferenceCallback) comm
 						},
 					},
 					"loadBalancerSourceRanges": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-type": "atomic",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "If specified and supported by the platform, this will restrict traffic through the cloud-provider load-balancer will be restricted to the specified client IPs. This field will be ignored if the cloud-provider does not support the feature.\" More info: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/",
 							Type:        []string{"array"},
