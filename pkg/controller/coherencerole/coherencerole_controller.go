@@ -96,7 +96,7 @@ func newReconciler(mgr manager.Manager) *ReconcileCoherenceRole {
 		client:        mgr.GetClient(),
 		scheme:        scheme,
 		gvk:           gvk,
-		events:        mgr.GetRecorder(controllerName),
+		events:        mgr.GetEventRecorderFor(controllerName),
 		statusHARetry: retry,
 		mgr:           mgr,
 		resourceLocks: make(map[types.NamespacedName]bool),

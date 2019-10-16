@@ -70,7 +70,7 @@ func newReconciler(mgr manager.Manager) reconcile.Reconciler {
 	return &ReconcileCoherenceCluster{
 		client:        mgr.GetClient(),
 		scheme:        mgr.GetScheme(),
-		events:        mgr.GetRecorder(controllerName),
+		events:        mgr.GetEventRecorderFor(controllerName),
 		resourceLocks: make(map[types.NamespacedName]bool),
 		mutex:         sync.Mutex{},
 	}
@@ -419,16 +419,10 @@ func (r *ReconcileCoherenceCluster) getDesiredRoles(cluster *coherence.Coherence
 func (r *ReconcileCoherenceCluster) findExistingRoles(clusterName string, namespace string, roles map[string]coherence.CoherenceRole) error {
 	list := &coherence.CoherenceRoleList{}
 
-	opts := client.ListOptions{
-		Namespace: namespace,
-	}
+	labels := client.MatchingLabels{}
+	labels[coherence.CoherenceClusterLabel] = clusterName
 
-	err := opts.SetLabelSelector(coherence.CoherenceClusterLabel + "=" + clusterName)
-	if err != nil {
-		return err
-	}
-
-	err = r.client.List(context.TODO(), &opts, list)
+	err := r.client.List(context.TODO(), list, client.InNamespace(namespace), labels)
 	if err != nil {
 		return err
 	}
