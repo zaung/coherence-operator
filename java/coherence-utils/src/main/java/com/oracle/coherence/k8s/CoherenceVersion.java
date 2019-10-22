@@ -56,18 +56,22 @@ public class CoherenceVersion {
             coherenceVersion = coherenceVersion.substring(coherenceVersion.indexOf(":") + 1);
         }
 
-        boolean result = true;
         int[] coherenceParts = splitVersion(coherenceVersion);
         int[] versionParts = splitVersion(args[0]);
         int partCount = Math.min(coherenceParts.length, versionParts.length);
 
         if (partCount > 0) {
-            for (int i = 0; i < partCount && result; i++) {
-                result = coherenceParts[i] >= versionParts[i];
+            for (int i = 0; i < partCount; i++) {
+                if (coherenceParts[i] == versionParts[i]) {
+                    continue;
+                }
+                // else versions differ
+                return coherenceParts[i] > versionParts[i];
             }
         }
 
-        return result;
+        // versions are equal
+        return true;
     }
 
     private static int[] splitVersion(String version) {

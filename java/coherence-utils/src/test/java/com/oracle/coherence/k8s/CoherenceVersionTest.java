@@ -24,6 +24,9 @@ public class CoherenceVersionTest {
         assertThat(CoherenceVersion.versionCheck("1.1.1.1", "1.1.1.0"), is(true));
         assertThat(CoherenceVersion.versionCheck("1.1.1.1.1", "1.1.1.1.0"), is(true));
         assertThat(CoherenceVersion.versionCheck("1.1.1.1.1.1", "1.1.1.1.1.0"), is(true));
+
+        assertThat(CoherenceVersion.versionCheck("14.1.1.0.0", "12.2.1.4.0"), is(true));
+        assertThat(CoherenceVersion.versionCheck("14.1.1.0.0-beta-rc2", "12.2.1.4.0"), is(true));
     }
 
     @Test
@@ -45,5 +48,8 @@ public class CoherenceVersionTest {
         assertThat(CoherenceVersion.versionCheck("1.1.1", "1.1.2"), is(false));
         assertThat(CoherenceVersion.versionCheck("1.1.1.1", "1.1.1.2"), is(false));
         assertThat(CoherenceVersion.versionCheck("1.1.1.1.1", "1.1.1.1.2"), is(false));
+
+        assertThat(CoherenceVersion.versionCheck("12.2.1.3.2", "12.2.1.4.0"), is(false));
+        assertThat(CoherenceVersion.versionCheck("12.2.1.4.0", "14.1.1.1.0"), is(false));
     }
 }
