@@ -64,7 +64,7 @@ GO_TEST_FLAGS_E2E := -timeout=100m $(GO_TEST_FLAGS)
 
 # This is the Coherence image that will be used in the Go tests.
 # Changing this variable will allow test builds to be run against different Coherence versions
-TEST_COHERENCE_IMAGE ?= iad.ocir.io/odx-stateservice/test/coherence:14.1.1.0.0-beta-slim
+TEST_COHERENCE_IMAGE ?= iad.ocir.io/odx-stateservice/test/coherence:14.1.1.0.0-beta-slim-367
 
 # default as in test/e2e/helper/proj_helpers.go
 TEST_NAMESPACE ?= operator-test
