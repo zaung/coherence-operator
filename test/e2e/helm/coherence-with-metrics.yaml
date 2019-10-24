@@ -3,6 +3,9 @@ kind: CoherenceCluster
 metadata:
   name: test-cluster
 spec:
+  coherence:
+    metrics:
+      enabled: true
   ports:
     - name: metrics
       port: 9612
