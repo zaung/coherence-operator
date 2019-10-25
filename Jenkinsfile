@@ -92,7 +92,7 @@ pipeline {
                     docker rmi $(docker images -q -f "dangling=true") || true
                     make clean
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
-                    export TEST_COHERENCE_IMAGE=$(eval echo COHERENCE_IMAGE)
+                    export TEST_COHERENCE_IMAGE=$(eval echo $COHERENCE_IMAGE)
                     export TEST_MANIFEST_VALUES=deploy/oci-values.yaml
                     make build-all
                     '''
@@ -118,7 +118,7 @@ pipeline {
                 withMaven(jdk: 'JDK 11.0.3', maven: 'Maven3.6.0', mavenSettingsConfig: 'coherence-operator-maven-settings', tempBinDir: '') {
                     sh '''
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
-                    export TEST_COHERENCE_IMAGE=$(eval echo COHERENCE_IMAGE)
+                    export TEST_COHERENCE_IMAGE=$(eval echo $COHERENCE_IMAGE)
                     export TEST_MANIFEST_VALUES=deploy/oci-values.yaml
                     make test-all
                     '''
@@ -135,7 +135,7 @@ pipeline {
                     sh '''
                         export http_proxy=$HTTP_PROXY
                         export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
-                        export TEST_COHERENCE_IMAGE=$(eval echo COHERENCE_IMAGE)
+                        export TEST_COHERENCE_IMAGE=$(eval echo $COHERENCE_IMAGE)
                         make build-all-images
                     '''
                 }
@@ -156,7 +156,7 @@ pipeline {
                             docker login $DOCKER_SERVER -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
                             export http_proxy=$HTTP_PROXY
                             export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
-                            export TEST_COHERENCE_IMAGE=$(eval echo COHERENCE_IMAGE)
+                            export TEST_COHERENCE_IMAGE=$(eval echo $COHERENCE_IMAGE)
                             make push-all-images
                         '''
                     }
@@ -211,7 +211,7 @@ pipeline {
                     export IMAGE_PULL_SECRETS=coherence-k8s-operator-development-secret,ocr-k8s-operator-development-secret
                     export IMAGE_PULL_POLICY=Always
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
-                    export TEST_COHERENCE_IMAGE=$(eval echo COHERENCE_IMAGE)
+                    export TEST_COHERENCE_IMAGE=$(eval echo $COHERENCE_IMAGE)
                     export TEST_MANIFEST_VALUES=deploy/oci-values.yaml
                     make e2e-local-test
                     make script-test
@@ -233,7 +233,7 @@ pipeline {
                     export IMAGE_PULL_POLICY=Always
                     export IMAGE_PULL_SECRETS=coherence-k8s-operator-development-secret,ocr-k8s-operator-development-secret
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
-                    export TEST_COHERENCE_IMAGE=$(eval echo COHERENCE_IMAGE)
+                    export TEST_COHERENCE_IMAGE=$(eval echo $COHERENCE_IMAGE)
                     export TEST_MANIFEST_VALUES=deploy/oci-values.yaml
                     make e2e-test
                 '''
@@ -254,7 +254,7 @@ pipeline {
                     export IMAGE_PULL_POLICY=Always
                     export IMAGE_PULL_SECRETS=coherence-k8s-operator-development-secret,ocr-k8s-operator-development-secret
                     export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
-                    export TEST_COHERENCE_IMAGE=$(eval echo COHERENCE_IMAGE)
+                    export TEST_COHERENCE_IMAGE=$(eval echo $COHERENCE_IMAGE)
                     export TEST_MANIFEST_VALUES=deploy/oci-values.yaml
                     kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/master/example/prometheus-operator-crd/alertmanager.crd.yaml
                     kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/master/example/prometheus-operator-crd/prometheus.crd.yaml
@@ -286,7 +286,7 @@ pipeline {
                     withMaven(jdk: 'JDK 11.0.3', maven: 'Maven3.6.0', mavenSettingsConfig: 'coherence-operator-maven-settings', tempBinDir: '') {
                         sh '''
                         export RELEASE_IMAGE_PREFIX=$(eval echo $TEST_IMAGE_PREFIX)
-                        export TEST_COHERENCE_IMAGE=$(eval echo COHERENCE_IMAGE)
+                        export TEST_COHERENCE_IMAGE=$(eval echo $COHERENCE_IMAGE)
                         docker login $DOCKER_SERVER -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
                         docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
                         git config user.name "Coherence Bot"
