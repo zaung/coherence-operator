@@ -167,7 +167,7 @@ func ShouldGetClusterSizeMetric(t *testing.T, pod corev1.Pod) {
 	metrics := PrometheusVector{}
 	err := PrometheusQuery(pod, "vendor:coherence_cluster_size", &metrics)
 	g.Expect(err).NotTo(HaveOccurred())
-	g.Expect(len(metrics.Result)).To(Equal(1))
+	g.Expect(len(metrics.Result)).To(Not(BeZero()))
 	g.Expect(len(metrics.Result[0].Labels["cluster"])).To(Equal("test-cluster"))
 }
 
