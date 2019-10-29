@@ -28,7 +28,7 @@ def archiveAndCleanup() {
 
 pipeline {
     agent {
-        label 'Kubernetes'
+        label 'Dhiru'
     }
     environment {
         HTTP_PROXY  = credentials('coherence-operator-http-proxy')
