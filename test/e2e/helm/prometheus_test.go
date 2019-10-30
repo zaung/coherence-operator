@@ -143,8 +143,8 @@ func ShouldEventuallySeeClusterMetrics(t *testing.T, promPod corev1.Pod, cohPods
 		}
 
 		for _, v := range result.Result {
-			if v.Labels["job"] == "coherence-service-metrics" {
-				name := v.Labels["pod"]
+			if v.Metric["job"] == "coherence-service-metrics" {
+				name := v.Metric["pod"]
 				m[name] = true
 			}
 		}
@@ -168,7 +168,9 @@ func ShouldGetClusterSizeMetric(t *testing.T, pod corev1.Pod) {
 	err := PrometheusQuery(pod, "vendor:coherence_cluster_size", &metrics)
 	g.Expect(err).NotTo(HaveOccurred())
 	g.Expect(len(metrics.Result)).To(Not(BeZero()))
-	g.Expect(len(metrics.Result[0].Labels["cluster"])).To(Equal("test-cluster"))
+	metric := metrics.GetMetric("vendor:coherence_cluster_size")
+	g.Expect(metric).NotTo(BeNil())
+	g.Expect(metric.Metric["cluster"]).To(Equal("test-cluster"))
 }
 
 func PrometheusQuery(pod corev1.Pod, query string, result interface{}) error {
@@ -272,8 +274,22 @@ type PrometheusVector struct {
 	Result     []PrometheusMetric `json:"result"`
 }
 
+func (m *PrometheusVector) GetMetric(name string) *PrometheusMetric {
+	if m == nil {
+		return nil
+	}
+
+	for _, result := range m.Result {
+		if result.GetName() == name {
+			return &result
+		}
+	}
+
+	return nil
+}
+
 type PrometheusMetric struct {
-	Labels map[string]string `json:"metric"`
+	Metric map[string]string `json:"metric"`
 	Value  []interface{}     `json:"value"`
 }
 
@@ -281,5 +297,5 @@ func (m *PrometheusMetric) GetName() string {
 	if m == nil {
 		return ""
 	}
-	return m.Labels["__name__"]
+	return m.Metric["__name__"]
 }
